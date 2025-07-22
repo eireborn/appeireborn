@@ -85,6 +85,13 @@ export const sampleAds = {
       tagline: "Quality Ammunition & Accessories",
       website: "https://example.com",
       backgroundColor: '#f97316'
+    },
+    // NEW ADVERTISEMENT - Add your new ad here!
+    {
+      company: "Aussie Gun Works",
+      tagline: "Custom Gunsmithing & Repairs",
+      website: "https://aussiegunworks.com.au",
+      backgroundColor: '#fb923c'
     }
   ],
   training: [
@@ -93,6 +100,13 @@ export const sampleAds = {
       tagline: "Professional Clay Shooting Training",
       website: "https://example.com",
       backgroundColor: '#fb923c'
+    },
+    // NEW TRAINING AD - Example
+    {
+      company: "Elite Shooting School",
+      tagline: "Learn from Olympic Champions",
+      website: "https://eliteshooting.com.au",
+      backgroundColor: '#f97316'
     }
   ],
   ranges: [
@@ -101,6 +115,15 @@ export const sampleAds = {
       tagline: "Premier Shooting Facility",
       website: "https://example.com",
       backgroundColor: '#fdba74'
+    }
+  ],
+  // NEW CATEGORY - You can add new categories!
+  services: [
+    {
+      company: "Clay Insurance Co",
+      tagline: "Specialized Shooting Sports Insurance",
+      website: "https://clayinsurance.com.au",
+      backgroundColor: '#ea580c'
     }
   ]
 };
