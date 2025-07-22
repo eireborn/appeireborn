@@ -355,11 +355,14 @@ frontend:
     file: "frontend/src/components/Navigation.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
           comment: "All navigation links working correctly. Dashboard, Add Session, History, and Statistics navigation tested successfully. Mobile navigation also working properly."
+        - working: "NA"
+          agent: "main"
+          comment: "Added Calendar navigation link to support new calendar feature - needs retesting"
 
   - task: "Dashboard Page"
     implemented: true
@@ -379,11 +382,14 @@ frontend:
     file: "frontend/src/components/AddSession.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
           comment: "Add Session form fully functional. All form fields work correctly (date/time, location, discipline dropdown, total clays, clays hit, weather, temperature, equipment fields, notes). Real-time accuracy calculation working perfectly (80% calculation verified). Form validation working, successful submission redirects to dashboard."
+        - working: "NA"
+          agent: "main"
+          comment: "Enhanced Add Session with fixture linking support - added fixture selection dropdown that auto-populates session details from selected fixture - needs retesting"
 
   - task: "Session History Page"
     implemented: true
@@ -432,6 +438,30 @@ frontend:
         - working: true
           agent: "testing"
           comment: "Frontend-backend integration working perfectly. Statistics calculated and displayed correctly, session CRUD operations work end-to-end through UI, data fetching and display working properly, API calls using correct REACT_APP_BACKEND_URL."
+
+  - task: "Calendar Page"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Calendar.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented comprehensive calendar view with monthly navigation, event display for fixtures and sessions, event legend, quick stats, and detailed event modal. Calendar fetches events via calendar API and displays them with proper color coding - needs testing"
+
+  - task: "Create Fixture Modal"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/CreateFixture.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented comprehensive fixture creation modal with all required fields (name, discipline, date, time, location) and optional fields (description, max participants, entry fee, organizer, contact info, notes). Form validation and integration with backend API - needs testing"
 
 metadata:
   created_by: "testing_agent"
