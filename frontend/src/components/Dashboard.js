@@ -30,7 +30,7 @@ const Dashboard = ({ sessions, stats }) => {
           alt="Clay Pigeon Shooting"
           className="hero-image"
         />
-        <h1 className="text-4xl font-bold mb-4">Welcome to Clay Tracker</h1>
+        <h1 className="text-4xl font-bold mb-4">Welcome to Clay Tracker Australia</h1>
         <p className="text-xl opacity-90">
           Track your clay pigeon shooting performance and improve your skills
         </p>
