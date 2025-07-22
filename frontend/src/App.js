@@ -109,6 +109,10 @@ function App() {
                 element={<AddSession onAddSession={addSession} />} 
               />
               <Route 
+                path="/calendar" 
+                element={<Calendar />} 
+              />
+              <Route 
                 path="/history" 
                 element={
                   <SessionHistory 
