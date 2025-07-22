@@ -328,25 +328,12 @@ const Calendar = () => {
         </div>
       )}
 
-      {/* Create Fixture Modal - Placeholder */}
-      {showCreateFixture && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Create Fixture</h3>
-              <p className="text-gray-600 mb-6">
-                Fixture creation form will be implemented in the next phase.
-              </p>
-              <button
-                onClick={() => setShowCreateFixture(false)}
-                className="btn-primary"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Create Fixture Modal */}
+      <CreateFixture
+        isOpen={showCreateFixture}
+        onClose={() => setShowCreateFixture(false)}
+        onFixtureCreated={handleFixtureCreated}
+      />
     </div>
   );
 };
