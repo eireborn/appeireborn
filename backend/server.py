@@ -109,9 +109,13 @@ async def create_session(session_data: ShootingSessionCreate):
     # Convert date to string for MongoDB storage
     session_dict['date'] = session_dict['date'].isoformat()
     session_obj = ShootingSession(**session_dict)
-    session_dict = session_obj.dict()
     
-    result = await db.shooting_sessions.insert_one(session_dict)
+    # Store the dict with string date for MongoDB
+    storage_dict = session_dict.copy()
+    storage_dict['id'] = session_obj.id
+    storage_dict['created_at'] = session_obj.created_at
+    
+    result = await db.shooting_sessions.insert_one(storage_dict)
     if result.inserted_id:
         return session_obj
     raise HTTPException(status_code=500, detail="Failed to create session")
