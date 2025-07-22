@@ -260,75 +260,93 @@ backend:
 
   - task: "Create Fixture"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added POST /api/fixtures endpoint with Fixture model including name, description, date, time, location, discipline, max_participants, entry_fee, organizer, contact_info, notes - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Create Fixture endpoint working perfectly. Tested both basic fixture creation (required fields only) and full fixture creation (all optional fields). Proper date handling with ISO string storage and date object response. All fixture fields saved and retrieved correctly"
 
   - task: "Get All Fixtures"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added GET /api/fixtures endpoint with pagination support - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Get All Fixtures endpoint working correctly. Returns list of fixtures with proper pagination support (limit/skip parameters). Date conversion from ISO string to date object working properly"
 
   - task: "Get Fixture by ID"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added GET /api/fixtures/{fixture_id} endpoint - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Get Fixture by ID endpoint working correctly. Returns specific fixture by ID with proper date conversion and all fields intact"
 
   - task: "Update Fixture"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added PUT /api/fixtures/{fixture_id} endpoint - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Update Fixture endpoint working correctly. Successfully updates fixture fields (max_participants, entry_fee, notes tested) and returns updated fixture with proper date handling"
 
   - task: "Delete Fixture"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added DELETE /api/fixtures/{fixture_id} endpoint - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Delete Fixture endpoint working correctly. Successfully deletes fixture and returns proper success message. Non-existent fixture handling also working (returns 404)"
 
   - task: "Calendar Events Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added GET /api/calendar/events endpoint to fetch fixtures and sessions within date range for calendar display - needs testing"
+        - working: true
+          agent: "testing"
+          comment: "Calendar Events endpoint working perfectly. Successfully fetches both fixtures and sessions within specified date range. Returns unified events list with proper type identification (fixture/session), all required fields present, sorted by date and time. Date validation working correctly (returns 400 for invalid dates)"
 
 frontend:
   - task: "Navigation & Routing"
