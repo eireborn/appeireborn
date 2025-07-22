@@ -18,7 +18,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <div className="text-2xl font-bold text-purple-600 mr-8">
-              🎯 Clay Tracker
+              🎯 Clay Tracker Australia
             </div>
             <div className="hidden md:flex space-x-4">
               {navItems.map((item) => (
