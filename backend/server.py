@@ -116,6 +116,8 @@ class ShootingSessionCreate(BaseModel):
     cartridge_type: Optional[str] = None
     choke_used: Optional[str] = None
     notes: Optional[str] = None
+    fixture_id: Optional[str] = None
+    fixture_name: Optional[str] = None
 
 class ShootingSessionUpdate(BaseModel):
     date: Optional[date] = None
@@ -131,6 +133,8 @@ class ShootingSessionUpdate(BaseModel):
     cartridge_type: Optional[str] = None
     choke_used: Optional[str] = None
     notes: Optional[str] = None
+    fixture_id: Optional[str] = None
+    fixture_name: Optional[str] = None
 
 class SessionStats(BaseModel):
     total_sessions: int
