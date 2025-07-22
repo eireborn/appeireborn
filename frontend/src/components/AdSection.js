@@ -75,9 +75,9 @@ const AdSection = ({ title, ads }) => {
 export const sampleAds = {
   equipment: [
     {
-      company: "ShotGun Sports Australia",
-      tagline: "Premium Firearms & Equipment",
-      website: "https://example.com",
+      company: "Eireborn Australia",
+      tagline: "Premium Shooting Vest & Accessories",
+      website: "https://eireborn.au",
       backgroundColor: '#ea580c'
     },
     {
