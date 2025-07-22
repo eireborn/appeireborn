@@ -49,6 +49,12 @@ const Calendar = () => {
     }
   };
 
+  const handleFixtureCreated = (newFixture) => {
+    setFixtures(prev => [newFixture, ...prev]);
+    // Refresh events to include the new fixture
+    fetchEvents();
+  };
+
   useEffect(() => {
     fetchEvents();
     fetchFixtures();
