@@ -213,6 +213,31 @@ const AddSession = ({ onAddSession }) => {
             </div>
           </div>
 
+          {/* Fixture Selection */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Link to Fixture (Optional)
+            </label>
+            <select
+              name="fixture_id"
+              value={formData.fixture_id}
+              onChange={handleInputChange}
+              className="form-select"
+            >
+              <option value="">No fixture - Regular practice session</option>
+              {fixtures.map(fixture => (
+                <option key={fixture.id} value={fixture.id}>
+                  {fixture.name} - {new Date(fixture.date).toLocaleDateString()} at {fixture.location}
+                </option>
+              ))}
+            </select>
+            {formData.fixture_id && (
+              <p className="text-xs text-gray-600 mt-1">
+                Session will be linked to: <span className="font-semibold">{formData.fixture_name}</span>
+              </p>
+            )}
+          </div>
+
           {/* Shooting Performance */}
           <div className="bg-gray-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Shooting Performance</h3>
