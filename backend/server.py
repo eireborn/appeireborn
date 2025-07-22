@@ -148,7 +148,7 @@ class SessionStats(BaseModel):
 # Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Clay Pigeon Shooting Tracker API"}
+    return {"message": "Clay Tracker Australia - Shooting Performance API"}
 
 @api_router.post("/sessions", response_model=ShootingSession)
 async def create_session(session_data: ShootingSessionCreate):
