@@ -42,6 +42,47 @@ class WeatherCondition(str, Enum):
     OVERCAST = "overcast"
 
 # Models
+class Fixture(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = None
+    date: date
+    time: str
+    location: str
+    discipline: DisciplineType
+    max_participants: Optional[int] = None
+    entry_fee: Optional[float] = None
+    organizer: Optional[str] = None
+    contact_info: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class FixtureCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    date: date
+    time: str
+    location: str
+    discipline: DisciplineType
+    max_participants: Optional[int] = None
+    entry_fee: Optional[float] = None
+    organizer: Optional[str] = None
+    contact_info: Optional[str] = None
+    notes: Optional[str] = None
+
+class FixtureUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    date: Optional[date] = None
+    time: Optional[str] = None
+    location: Optional[str] = None
+    discipline: Optional[DisciplineType] = None
+    max_participants: Optional[int] = None
+    entry_fee: Optional[float] = None
+    organizer: Optional[str] = None
+    contact_info: Optional[str] = None
+    notes: Optional[str] = None
+
 class ShootingSession(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     date: date
@@ -57,6 +98,8 @@ class ShootingSession(BaseModel):
     cartridge_type: Optional[str] = None
     choke_used: Optional[str] = None
     notes: Optional[str] = None
+    fixture_id: Optional[str] = None  # Link to fixture if session is part of a fixture
+    fixture_name: Optional[str] = None  # Denormalized fixture name for easy display
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class ShootingSessionCreate(BaseModel):
