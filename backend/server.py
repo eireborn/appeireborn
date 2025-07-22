@@ -155,6 +155,17 @@ async def create_session(session_data: ShootingSessionCreate):
     session_dict = session_data.dict()
     # Convert date to string for MongoDB storage
     session_dict['date'] = session_dict['date'].isoformat()
+    
+    # If fixture_id is provided, fetch fixture details
+    if session_dict.get('fixture_id'):
+        fixture = await db.fixtures.find_one({"id": session_dict['fixture_id']})
+        if fixture:
+            session_dict['fixture_name'] = fixture['name']
+        else:
+            # If fixture not found, clear the fixture_id
+            session_dict['fixture_id'] = None
+            session_dict['fixture_name'] = None
+    
     session_obj = ShootingSession(**session_dict)
     
     # Store the dict with string date for MongoDB
