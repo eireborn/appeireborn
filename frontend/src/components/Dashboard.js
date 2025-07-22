@@ -26,7 +26,7 @@ const Dashboard = ({ sessions, stats }) => {
       {/* Hero Section */}
       <div className="hero-section">
         <img 
-          src="https://i.imgur.com/SY26upO.png"
+          src="https://i.imgur.com/SY26upO.jpeg"
           alt="Clay Pigeon Shooting - Australian Shooting Community"
           className="hero-image"
         />
