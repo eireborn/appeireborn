@@ -7,6 +7,7 @@ const Navigation = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '📊' },
     { path: '/add-session', label: 'Add Session', icon: '➕' },
+    { path: '/calendar', label: 'Calendar', icon: '📅' },
     { path: '/history', label: 'History', icon: '📝' },
     { path: '/statistics', label: 'Statistics', icon: '📈' },
   ];
