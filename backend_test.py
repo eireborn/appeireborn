@@ -636,11 +636,49 @@ def main():
     test_nonexistent_session()
     test_update_nonexistent_session()
     
+    # NEW FIXTURE TESTS (Tests 14-19)
+    print("\n" + "="*40)
+    print("TESTING NEW FIXTURE FUNCTIONALITY")
+    print("="*40)
+    
+    # Test 14-15: Create fixtures
+    fixture_id_1 = test_create_fixture_basic()
+    fixture_id_2 = test_create_fixture_full()
+    
+    # Test 16: Get all fixtures
+    all_fixtures = test_get_all_fixtures()
+    
+    # Test 17: Get fixture by ID
+    if fixture_id_1:
+        test_get_fixture_by_id(fixture_id_1)
+    
+    # Test 18: Update fixture
+    if fixture_id_2:
+        test_update_fixture(fixture_id_2)
+    
+    # Test 20: Calendar events
+    calendar_events = test_calendar_events()
+    if calendar_events:
+        print(f"Found {len(calendar_events)} calendar events")
+    
+    # Test 21: Session with fixture linking
+    test_session_with_fixture_linking()
+    
+    # Test 22-23: Fixture edge cases
+    test_nonexistent_fixture()
+    test_invalid_calendar_dates()
+    
     # Test 7: Delete sessions (cleanup)
     if session_id_1:
         test_delete_session(session_id_1)
     if session_id_2:
         test_delete_session(session_id_2)
+    
+    # Test 19: Delete fixtures (cleanup)
+    if fixture_id_1:
+        test_delete_fixture(fixture_id_1)
+    if fixture_id_2:
+        test_delete_fixture(fixture_id_2)
     
     # Final summary
     return results.summary()
