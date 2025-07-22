@@ -115,7 +115,9 @@ const AddSession = ({ onAddSession }) => {
         gun_used: formData.gun_used || null,
         cartridge_type: formData.cartridge_type || null,
         choke_used: formData.choke_used || null,
-        notes: formData.notes || null
+        notes: formData.notes || null,
+        fixture_id: formData.fixture_id || null,
+        fixture_name: formData.fixture_name || null
       };
 
       await onAddSession(sessionData);
