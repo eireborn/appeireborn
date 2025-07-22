@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the clay pigeon shooting tracker backend API comprehensively: Basic API Health Check, Session CRUD Operations, Statistics Endpoint, Data Validation, and Edge Cases"
+user_problem_statement: "Enhance the clay pigeon shooting tracker with shooting calendar and fixture names functionality. Test the new backend API endpoints for fixtures and calendar events"
 
 backend:
   - task: "API Health Check"
@@ -123,7 +123,7 @@ backend:
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
           agent: "testing"
@@ -131,6 +131,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "Fixed BSON encoding issue in create_session function. Now properly stores date as ISO string in MongoDB while returning proper date object in response. Both basic and full session creation working correctly"
+        - working: "NA"
+          agent: "main"
+          comment: "Updated session creation to support fixture linking with fixture_id and fixture_name fields - needs retesting"
 
   - task: "Get All Sessions"
     implemented: true
@@ -251,6 +254,78 @@ backend:
         - working: true
           agent: "testing"
           comment: "All weather conditions supported correctly: sunny, cloudy, windy, rainy, overcast"
+
+  - task: "Create Fixture"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added POST /api/fixtures endpoint with Fixture model including name, description, date, time, location, discipline, max_participants, entry_fee, organizer, contact_info, notes - needs testing"
+
+  - task: "Get All Fixtures"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added GET /api/fixtures endpoint with pagination support - needs testing"
+
+  - task: "Get Fixture by ID"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added GET /api/fixtures/{fixture_id} endpoint - needs testing"
+
+  - task: "Update Fixture"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added PUT /api/fixtures/{fixture_id} endpoint - needs testing"
+
+  - task: "Delete Fixture"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added DELETE /api/fixtures/{fixture_id} endpoint - needs testing"
+
+  - task: "Calendar Events Endpoint"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added GET /api/calendar/events endpoint to fetch fixtures and sessions within date range for calendar display - needs testing"
 
 frontend:
   - task: "Navigation & Routing"
