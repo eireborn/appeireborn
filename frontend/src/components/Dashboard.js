@@ -192,6 +192,14 @@ const Dashboard = ({ sessions, stats }) => {
           ads={[...sampleAds.training, ...sampleAds.ranges]} 
         />
       </div>
+      
+      {/* Additional Services Advertisement */}
+      <div className="mt-6">
+        <AdSection 
+          title="Professional Services" 
+          ads={sampleAds.services} 
+        />
+      </div>
     </div>
   );
 };
