@@ -180,6 +180,18 @@ const Dashboard = ({ sessions, stats }) => {
           </div>
         </div>
       )}
+
+      {/* Advertising Section */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AdSection 
+          title="Equipment & Supplies" 
+          ads={sampleAds.equipment} 
+        />
+        <AdSection 
+          title="Training & Ranges" 
+          ads={[...sampleAds.training, ...sampleAds.ranges]} 
+        />
+      </div>
     </div>
   );
 };
