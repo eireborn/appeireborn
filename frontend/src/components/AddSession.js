@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const AddSession = ({ onAddSession }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [fixtures, setFixtures] = useState([]);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
@@ -17,7 +22,9 @@ const AddSession = ({ onAddSession }) => {
     gun_used: '',
     cartridge_type: '',
     choke_used: '',
-    notes: ''
+    notes: '',
+    fixture_id: '',
+    fixture_name: ''
   });
 
   const disciplineOptions = [
