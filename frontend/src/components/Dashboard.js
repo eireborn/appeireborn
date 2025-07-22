@@ -26,8 +26,8 @@ const Dashboard = ({ sessions, stats }) => {
       {/* Hero Section */}
       <div className="hero-section">
         <img 
-          src="https://images.unsplash.com/photo-1606401900698-8ab5e587ed77?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwyfHxjbGF5JTIwcGlnZW9uJTIwc2hvb3Rpbmd8ZW58MHx8fHwxNzUzMTQ4MDA2fDA&ixlib=rb-4.1.0&q=85"
-          alt="Clay Pigeon Shooting"
+          src="https://images.unsplash.com/photo-1703229702395-a036488fe6e7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxzaG9vdGluZyUyMHNwb3J0fGVufDB8fHxibGFja19hbmRfd2hpdGV8MTc1MzE1NTEzN3ww&ixlib=rb-4.1.0&q=85"
+          alt="Clay Pigeon Shooting - Authentic Shooting Sports"
           className="hero-image"
         />
         <h1 className="text-4xl font-bold mb-4">Welcome to Clay Tracker Australia</h1>
