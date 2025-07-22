@@ -86,7 +86,7 @@ const Dashboard = ({ sessions, stats }) => {
           <h2 className="text-2xl font-bold text-gray-800">Recent Sessions</h2>
           <a 
             href="/history" 
-            className="text-purple-600 hover:text-purple-700 font-semibold"
+            className="text-orange-600 hover:text-orange-700 font-semibold"
           >
             View All →
           </a>
