@@ -287,6 +287,148 @@ async def get_recent_sessions(limit: int = 5):
         result.append(ShootingSession(**session))
     return result
 
+# Fixture endpoints
+@api_router.post("/fixtures", response_model=Fixture)
+async def create_fixture(fixture_data: FixtureCreate):
+    fixture_dict = fixture_data.dict()
+    # Convert date to string for MongoDB storage
+    fixture_dict['date'] = fixture_dict['date'].isoformat()
+    fixture_obj = Fixture(**fixture_dict)
+    
+    # Store the dict with string date for MongoDB
+    storage_dict = fixture_dict.copy()
+    storage_dict['id'] = fixture_obj.id
+    storage_dict['created_at'] = fixture_obj.created_at
+    
+    result = await db.fixtures.insert_one(storage_dict)
+    if result.inserted_id:
+        return fixture_obj
+    raise HTTPException(status_code=500, detail="Failed to create fixture")
+
+@api_router.get("/fixtures", response_model=List[Fixture])
+async def get_fixtures(limit: int = 50, skip: int = 0):
+    fixtures = await db.fixtures.find().skip(skip).limit(limit).sort("date", -1).to_list(limit)
+    result = []
+    for fixture in fixtures:
+        # Convert date string back to date object
+        if isinstance(fixture['date'], str):
+            fixture['date'] = datetime.fromisoformat(fixture['date']).date()
+        result.append(Fixture(**fixture))
+    return result
+
+@api_router.get("/fixtures/{fixture_id}", response_model=Fixture)
+async def get_fixture(fixture_id: str):
+    fixture = await db.fixtures.find_one({"id": fixture_id})
+    if not fixture:
+        raise HTTPException(status_code=404, detail="Fixture not found")
+    
+    # Convert date string back to date object
+    if isinstance(fixture['date'], str):
+        fixture['date'] = datetime.fromisoformat(fixture['date']).date()
+    return Fixture(**fixture)
+
+@api_router.put("/fixtures/{fixture_id}", response_model=Fixture)
+async def update_fixture(fixture_id: str, fixture_data: FixtureUpdate):
+    update_dict = {k: v for k, v in fixture_data.dict().items() if v is not None}
+    
+    # Convert date to string if present
+    if 'date' in update_dict:
+        update_dict['date'] = update_dict['date'].isoformat()
+    
+    if not update_dict:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = await db.fixtures.update_one(
+        {"id": fixture_id},
+        {"$set": update_dict}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Fixture not found")
+    
+    # Fetch and return updated fixture
+    updated_fixture = await db.fixtures.find_one({"id": fixture_id})
+    if isinstance(updated_fixture['date'], str):
+        updated_fixture['date'] = datetime.fromisoformat(updated_fixture['date']).date()
+    return Fixture(**updated_fixture)
+
+@api_router.delete("/fixtures/{fixture_id}")
+async def delete_fixture(fixture_id: str):
+    result = await db.fixtures.delete_one({"id": fixture_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Fixture not found")
+    return {"message": "Fixture deleted successfully"}
+
+# Calendar endpoints
+@api_router.get("/calendar/events")
+async def get_calendar_events(start_date: str, end_date: str):
+    """Get all fixtures and sessions within a date range for calendar display"""
+    try:
+        start = datetime.fromisoformat(start_date).date()
+        end = datetime.fromisoformat(end_date).date()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    
+    # Get fixtures in date range
+    fixtures = await db.fixtures.find({
+        "date": {
+            "$gte": start.isoformat(),
+            "$lte": end.isoformat()
+        }
+    }).to_list(1000)
+    
+    # Get sessions in date range
+    sessions = await db.shooting_sessions.find({
+        "date": {
+            "$gte": start.isoformat(),
+            "$lte": end.isoformat()
+        }
+    }).to_list(1000)
+    
+    # Format fixtures for calendar
+    events = []
+    for fixture in fixtures:
+        if isinstance(fixture['date'], str):
+            fixture['date'] = datetime.fromisoformat(fixture['date']).date()
+        events.append({
+            "id": fixture['id'],
+            "title": fixture['name'],
+            "date": fixture['date'].isoformat(),
+            "time": fixture['time'],
+            "type": "fixture",
+            "discipline": fixture['discipline'],
+            "location": fixture['location'],
+            "description": fixture.get('description', ''),
+            "organizer": fixture.get('organizer', ''),
+            "entry_fee": fixture.get('entry_fee'),
+        })
+    
+    # Format sessions for calendar
+    for session in sessions:
+        if isinstance(session['date'], str):
+            session['date'] = datetime.fromisoformat(session['date']).date()
+        
+        accuracy = (session['clays_hit'] / session['total_clays'] * 100) if session['total_clays'] > 0 else 0
+        
+        events.append({
+            "id": session['id'],
+            "title": f"Session - {session['discipline'].replace('_', ' ').title()}",
+            "date": session['date'].isoformat(),
+            "time": session['time'],
+            "type": "session",
+            "discipline": session['discipline'],
+            "location": session['location'],
+            "accuracy": round(accuracy, 1),
+            "clays_hit": session['clays_hit'],
+            "total_clays": session['total_clays'],
+            "fixture_name": session.get('fixture_name', ''),
+        })
+    
+    # Sort by date and time
+    events.sort(key=lambda x: (x['date'], x['time']))
+    
+    return events
+
 # Include the router in the main app
 app.include_router(api_router)
 
