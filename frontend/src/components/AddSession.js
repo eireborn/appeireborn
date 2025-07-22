@@ -45,12 +45,48 @@ const AddSession = ({ onAddSession }) => {
     { value: 'overcast', label: 'Overcast' }
   ];
 
+  useEffect(() => {
+    fetchFixtures();
+  }, []);
+
+  const fetchFixtures = async () => {
+    try {
+      const response = await axios.get(`${API}/fixtures`);
+      setFixtures(response.data);
+    } catch (error) {
+      console.error('Error fetching fixtures:', error);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'fixture_id') {
+      if (value) {
+        const selectedFixture = fixtures.find(f => f.id === value);
+        setFormData(prev => ({
+          ...prev,
+          [name]: value,
+          fixture_name: selectedFixture ? selectedFixture.name : '',
+          // Auto-populate some fields from fixture if not already filled
+          location: prev.location || selectedFixture?.location || '',
+          discipline: selectedFixture?.discipline || prev.discipline,
+          date: selectedFixture?.date || prev.date,
+          time: selectedFixture?.time || prev.time
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          fixture_id: '',
+          fixture_name: ''
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
