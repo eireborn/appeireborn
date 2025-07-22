@@ -231,7 +231,7 @@ const Calendar = () => {
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Stats</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Featured Partners</h3>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Total Fixtures:</span>
@@ -247,6 +247,14 @@ const Calendar = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Calendar Advertising Section */}
+      <div className="mt-6">
+        <AdSection 
+          title="Shooting Equipment Partners" 
+          ads={sampleAds.equipment} 
+        />
       </div>
 
       {/* Event Detail Modal */}
