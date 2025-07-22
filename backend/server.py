@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +6,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
-from datetime import datetime
-
+from datetime import datetime, date
+from enum import Enum
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,32 +25,216 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Enums
+class DisciplineType(str, Enum):
+    TRAP = "trap"
+    SKEET = "skeet"
+    SPORTING_CLAYS = "sporting_clays"
+    DOWN_THE_LINE = "down_the_line"
+    OLYMPIC_TRAP = "olympic_trap"
+    AMERICAN_TRAP = "american_trap"
 
-# Define Models
-class StatusCheck(BaseModel):
+class WeatherCondition(str, Enum):
+    SUNNY = "sunny"
+    CLOUDY = "cloudy"
+    WINDY = "windy"
+    RAINY = "rainy"
+    OVERCAST = "overcast"
+
+# Models
+class ShootingSession(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    date: date
+    time: str
+    location: str
+    discipline: DisciplineType
+    total_clays: int
+    clays_hit: int
+    weather: Optional[WeatherCondition] = None
+    temperature: Optional[int] = None
+    wind_speed: Optional[str] = None
+    gun_used: Optional[str] = None
+    cartridge_type: Optional[str] = None
+    choke_used: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class ShootingSessionCreate(BaseModel):
+    date: date
+    time: str
+    location: str
+    discipline: DisciplineType
+    total_clays: int
+    clays_hit: int
+    weather: Optional[WeatherCondition] = None
+    temperature: Optional[int] = None
+    wind_speed: Optional[str] = None
+    gun_used: Optional[str] = None
+    cartridge_type: Optional[str] = None
+    choke_used: Optional[str] = None
+    notes: Optional[str] = None
 
-# Add your routes to the router instead of directly to app
+class ShootingSessionUpdate(BaseModel):
+    date: Optional[date] = None
+    time: Optional[str] = None
+    location: Optional[str] = None
+    discipline: Optional[DisciplineType] = None
+    total_clays: Optional[int] = None
+    clays_hit: Optional[int] = None
+    weather: Optional[WeatherCondition] = None
+    temperature: Optional[int] = None
+    wind_speed: Optional[str] = None
+    gun_used: Optional[str] = None
+    cartridge_type: Optional[str] = None
+    choke_used: Optional[str] = None
+    notes: Optional[str] = None
+
+class SessionStats(BaseModel):
+    total_sessions: int
+    total_clays: int
+    total_hits: int
+    overall_accuracy: float
+    best_session_accuracy: float
+    current_streak: int
+    favorite_discipline: str
+
+# Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Clay Pigeon Shooting Tracker API"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+@api_router.post("/sessions", response_model=ShootingSession)
+async def create_session(session_data: ShootingSessionCreate):
+    session_dict = session_data.dict()
+    # Convert date to string for MongoDB storage
+    session_dict['date'] = session_dict['date'].isoformat()
+    session_obj = ShootingSession(**session_dict)
+    session_dict = session_obj.dict()
+    
+    result = await db.shooting_sessions.insert_one(session_dict)
+    if result.inserted_id:
+        return session_obj
+    raise HTTPException(status_code=500, detail="Failed to create session")
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+@api_router.get("/sessions", response_model=List[ShootingSession])
+async def get_sessions(limit: int = 50, skip: int = 0):
+    sessions = await db.shooting_sessions.find().skip(skip).limit(limit).sort("date", -1).to_list(limit)
+    result = []
+    for session in sessions:
+        # Convert date string back to date object
+        if isinstance(session['date'], str):
+            session['date'] = datetime.fromisoformat(session['date']).date()
+        result.append(ShootingSession(**session))
+    return result
+
+@api_router.get("/sessions/{session_id}", response_model=ShootingSession)
+async def get_session(session_id: str):
+    session = await db.shooting_sessions.find_one({"id": session_id})
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    # Convert date string back to date object
+    if isinstance(session['date'], str):
+        session['date'] = datetime.fromisoformat(session['date']).date()
+    return ShootingSession(**session)
+
+@api_router.put("/sessions/{session_id}", response_model=ShootingSession)
+async def update_session(session_id: str, session_data: ShootingSessionUpdate):
+    update_dict = {k: v for k, v in session_data.dict().items() if v is not None}
+    
+    # Convert date to string if present
+    if 'date' in update_dict:
+        update_dict['date'] = update_dict['date'].isoformat()
+    
+    if not update_dict:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = await db.shooting_sessions.update_one(
+        {"id": session_id},
+        {"$set": update_dict}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    # Fetch and return updated session
+    updated_session = await db.shooting_sessions.find_one({"id": session_id})
+    if isinstance(updated_session['date'], str):
+        updated_session['date'] = datetime.fromisoformat(updated_session['date']).date()
+    return ShootingSession(**updated_session)
+
+@api_router.delete("/sessions/{session_id}")
+async def delete_session(session_id: str):
+    result = await db.shooting_sessions.delete_one({"id": session_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"message": "Session deleted successfully"}
+
+@api_router.get("/stats", response_model=SessionStats)
+async def get_stats():
+    sessions = await db.shooting_sessions.find().to_list(1000)
+    
+    if not sessions:
+        return SessionStats(
+            total_sessions=0,
+            total_clays=0,
+            total_hits=0,
+            overall_accuracy=0.0,
+            best_session_accuracy=0.0,
+            current_streak=0,
+            favorite_discipline=""
+        )
+    
+    total_sessions = len(sessions)
+    total_clays = sum(session['total_clays'] for session in sessions)
+    total_hits = sum(session['clays_hit'] for session in sessions)
+    overall_accuracy = (total_hits / total_clays * 100) if total_clays > 0 else 0
+    
+    # Calculate best session accuracy
+    best_accuracy = 0
+    for session in sessions:
+        if session['total_clays'] > 0:
+            accuracy = (session['clays_hit'] / session['total_clays'] * 100)
+            best_accuracy = max(best_accuracy, accuracy)
+    
+    # Find favorite discipline
+    discipline_counts = {}
+    for session in sessions:
+        discipline = session['discipline']
+        discipline_counts[discipline] = discipline_counts.get(discipline, 0) + 1
+    
+    favorite_discipline = max(discipline_counts, key=discipline_counts.get) if discipline_counts else ""
+    
+    # Calculate current streak (consecutive sessions with >80% accuracy)
+    current_streak = 0
+    sorted_sessions = sorted(sessions, key=lambda x: x['date'], reverse=True)
+    for session in sorted_sessions:
+        if session['total_clays'] > 0:
+            accuracy = (session['clays_hit'] / session['total_clays'] * 100)
+            if accuracy >= 80:
+                current_streak += 1
+            else:
+                break
+    
+    return SessionStats(
+        total_sessions=total_sessions,
+        total_clays=total_clays,
+        total_hits=total_hits,
+        overall_accuracy=round(overall_accuracy, 1),
+        best_session_accuracy=round(best_accuracy, 1),
+        current_streak=current_streak,
+        favorite_discipline=favorite_discipline
+    )
+
+@api_router.get("/sessions/recent/{limit}")
+async def get_recent_sessions(limit: int = 5):
+    sessions = await db.shooting_sessions.find().sort("date", -1).limit(limit).to_list(limit)
+    result = []
+    for session in sessions:
+        if isinstance(session['date'], str):
+            session['date'] = datetime.fromisoformat(session['date']).date()
+        result.append(ShootingSession(**session))
+    return result
 
 # Include the router in the main app
 app.include_router(api_router)
