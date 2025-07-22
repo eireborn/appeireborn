@@ -1,4 +1,5 @@
 import React from 'react';
+import AdSection, { sampleAds } from './AdSection';
 
 const Dashboard = ({ sessions, stats }) => {
   const recentSessions = sessions.slice(0, 5);
