@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 
 const AdBanner = ({ 
   company, 
@@ -96,9 +96,9 @@ export const sampleAds = {
   ],
   training: [
     {
-      company: "Precision Shooting Academy",
+      company: "Perth Metro Sporting Clays",
       tagline: "Professional Clay Shooting Training",
-      website: "https://example.com",
+      website: "https://pmsc.club",
       backgroundColor: '#fb923c'
     },
     // NEW TRAINING AD - Example
